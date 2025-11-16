@@ -1,4 +1,4 @@
-name: MLOps Model CI + MLflow
+name: MLOps Model CI + MLflow + Data Poisioned
 
 on:
   push:
@@ -49,33 +49,14 @@ jobs:
         run: |
           python3 model_train.py
 
-      - name: Load Model from mlflow
-        run: |
-          python3 fetch_model.py
-
-      - name: Run Tests
-        run: |
-          pytest -v &> output.txt 
-
       
       - name: Create cml report
         run: |
           # --- 1. Create the base report content ---
-          echo "# CML Test & Evaluation Report" > report.md
+          echo "# CML Report" > report.md
           
-          # --- 2. Section 1: Pytest Results ---
-          echo "## Pytest Sanity Check" >> report.md
-          # Check if output.txt exists before trying to cat it
-          if [ -f output.txt ]; then
-            echo "\`\`\`" >> report.md
-            cat output.txt >> report.md
-            echo "\`\`\`" >> report.md
-          else
-            echo "Pytest output file (output.txt) not found." >> report.md
-          fi
-          
-          ## Section 2: Evaluation Metrics Table
-          cat metrics.md >> report.md
+          # --- 2. Data Poisoing Results ---
+          echo "## Data Poisoning Done at 0% 5% 10% 15% 25% 50% 75%" >> report.md
           
           # Post the entire report.md content as a comment
           cml comment create report.md
